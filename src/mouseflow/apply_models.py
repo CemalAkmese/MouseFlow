@@ -73,10 +73,10 @@ def apply_dlc(filetype, vid_output, dlc_yaml, dir_out, vid_file, overwrite):
     if vid_output and not glob.glob(dir_out + '/' + os.path.basename(vid_file)[:-4] + '*labeled.mp4'):
         print("Generating DLC labeled video...")
         deeplabcut.create_labeled_video(
-            config=dlc_yaml, 
-            videos=[vid_file], 
+            config=dlc_yaml,
+            videos=[vid_file],
             draw_skeleton=False,
-            destfolder=dir_out, 
+            destfolder=dir_out,
             Frames2plot=np.arange(vid_output) if vid_output > 1 else None
         )
-    print("DLC labeled video saved in ", dir_out)
+        print("DLC labeled video saved in ", dir_out)
