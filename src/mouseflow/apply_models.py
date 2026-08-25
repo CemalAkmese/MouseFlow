@@ -6,11 +6,26 @@ import gdown
 def download_models(models_dir, facemodel_name, bodymodel_name):   
     if not os.path.exists(os.path.join(models_dir, facemodel_name)):
         dlc_face_url = 'https://drive.google.com/drive/folders/1_XPPyzaxMjQ901vJCwtv1g_h5DYWHM8j?usp=sharing'
-        gdown.download_folder(dlc_face_url, models_dir, quiet=True, use_cookies=False)
+        # url/output as keywords: gdown's download_folder() signature is
+        # (url, id, output, ...) -- passing output positionally lands it in
+        # `id` instead, which newer gdown rejects.
+        #
+        # output is the model's OWN subdirectory, not models_dir itself:
+        # the shared Drive folder's contents (config.yaml, dlc-models/, ...)
+        # land directly inside whatever `output` points at (confirmed
+        # against a real download -- gdown does not nest them under an
+        # extra folder of its own), and that per-model layout is exactly
+        # what the facemodel_name/bodymodel_name-joined paths below expect.
+        # Downloading both models straight into a shared models_dir would
+        # flatten them into the same directory and silently clobber one
+        # with the other.
+        gdown.download_folder(url=dlc_face_url, output=os.path.join(models_dir, facemodel_name),
+                               quiet=True, use_cookies=False)
 
     if not os.path.exists(os.path.join(models_dir, bodymodel_name)):
         dlc_body_url = 'https://drive.google.com/drive/folders/1_XPPyzaxMjQ901vJCwtv1g_h5DYWHM8j?usp=sharing'
-        gdown.download_folder(dlc_body_url, models_dir, quiet=True, use_cookies=False)
+        gdown.download_folder(url=dlc_body_url, output=os.path.join(models_dir, bodymodel_name),
+                               quiet=True, use_cookies=False)
     
     dlc_faceyaml = os.path.join(models_dir, facemodel_name, 'config.yaml')
     dlc_bodyyaml = os.path.join(models_dir, bodymodel_name, 'config.yaml')
